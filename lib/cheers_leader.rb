@@ -17,5 +17,10 @@ attr_reader :list
         asc ? list.sort_by {|x| x[0] } : list.sort_by {|x| -x[0] }  
     end
   end
+
+  def search(text)
+    return [] if text.nil?
+    list.select {|x| x[1].match (text) }
+  end
   
 end
