@@ -2,11 +2,11 @@ require 'cheers_leader'
 
 describe CheerLeaderList do
   before do 
-    leader_template = Struct.new(:rank, :name, :sent, :received)
+    leader = Struct.new(:rank, :name, :sent, :received)
     arr = []
-    arr << leader_template.new(2, "tuan", 2, 2)
-    arr << leader_template.new(1, 'luan', 1, 1)
-    arr << leader_template.new(3, 'ngoc', 3, 3)
+    arr << leader.new(2, "tuan", 2, 2)
+    arr << leader.new(1, 'luan', 1, 1)
+    arr << leader.new(3, 'ngoc', 3, 3)
     @list = CheerLeaderList.new(arr)
   end
 
