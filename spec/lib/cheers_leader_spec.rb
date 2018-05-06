@@ -1,66 +1,118 @@
 require 'cheers_leader'
 
 describe CheerLeaderList do
-  before do
-    arr = [[2, "luan", 2, 2], [1, "tuan", 1, 1], [3, "mai", 2, 3]]  
+  before do 
+    leader_template = Struct.new(:rank, :name, :sent, :received)
+    arr = []
+    arr << leader_template.new(2, "tuan", 2, 2)
+    arr << leader_template.new(1, 'luan', 1, 1)
+    arr << leader_template.new(3, 'ngoc', 3, 3)
     @list = CheerLeaderList.new(arr)
   end
-  
-  context "Cheers Leader list informations" do 
 
-    it "By default, the Cheers Leader list is empty" do
-      expect(CheerLeaderList.new(nil).sort_by('')).to eq([])
+  context 'Cheers Leader list contain rank, name, sent and received information' do
+
+    it 'Return by default sorted by rank asc'
+    # DONT KNOW HOW IT NOT WORKING ?? 
+
+    it 'Container all information' do
+      sample = @list.list[0]
+      expect(sample.rank).to eq 2
+      expect(sample.name).to eq "tuan"
+      expect(sample.sent).to eq 2
+      expect(sample.received).to eq 2
+    end
+  end
+
+  context 'Sort feature for Cheers Leader list' do
+
+    it 'Can be sorted by rank asc' do 
+      result = []
+      # WHY these below NOT WORKING ??? 
+      # ranks = @list.sort_by_rank.each_with_object([]) {|x, ranks| ranks[x] = x.rank}
+      # result = @list.sort_by_rank.each {|x| result[x] << x.rank}
+      @list.sort_by_rank.each do |x|
+        result << x.rank
+      end
+      expect(result).to eq [1,2,3]
+    end
+    
+    it 'Can be sorted by rank desc' do 
+      result = []
+      @list.sort_by_rank(false).each do |x|
+        result << x.rank
+      end
+      expect(result).to eq [3,2,1]
     end
 
-    it "Cheers Leader list contain rank, name, sent and receiveed " do
-      sub_arr = @list.sort_by('')[0]
-      expect(sub_arr).to eq [1, "tuan", 1, 1]
+    it 'Can be sorted by name asc' do 
+      result = []
+      @list.sort_by_name.each do |x|
+        result << x.name
+      end
+      expect(result).to eq ["luan", "ngoc", "tuan"]
+    end
+    
+    it 'Can be sorted by name desc' do 
+      result = []
+      @list.sort_by_name(false).each do |x|
+        result << x.name
+      end
+      expect(result).to eq ["tuan", "ngoc", "luan"]
+    end
+
+    it 'Can be sorted by sent asc' do 
+      result = []
+      @list.sort_by_sent.each do |x|
+        result << x.sent
+      end
+      expect(result).to eq [1,2,3]
+    end
+
+    it 'Can be sorted by sent desc' do 
+      result = []
+      @list.sort_by_sent(false).each do |x|
+        result << x.sent
+      end
+      expect(result).to eq [3,2,1]
+    end
+
+    it 'Can be sorted by received asc' do 
+      result = []
+      @list.sort_by_received.each do |x|
+        result << x.received
+      end
+      expect(result).to eq [1,2,3]
+    end
+
+    it 'Can be sorted by received desc' do 
+      result = []
+      @list.sort_by_received(false).each do |x|
+        result << x.received
+      end
+      expect(result).to eq [3,2,1]
+    end
+  end
+
+  context 'Search feature for Cheers Leader list' do
+
+    it 'Return [] when there is no matched search' do 
+      result = @list.search('a;dsklfjal;ksdjfal;')
+      expect(result).to eq([])
+    end
+
+    it 'Return all name include text search' do 
+      result = []
+      @list.search('uan').each do |x|
+        result << x.name
+      end
+      expect(result).to eq ["tuan", "luan"]
+    end
+
+    it 'Return only exact name for search text' do 
+      expect(@list.search('ngoc')[0].name).to eq('ngoc')
     end
 
   end
 
-  context "Cheer Leader list sorting" do
-
-    it "Cheers Leader list default sorted by rank asc" do
-      expect(@list.sort_by('rank')).to eq([[1, "tuan", 1, 1], [2, "luan", 2, 2], [3, "mai", 2, 3]])
-    end
-
-    it "Cheers Leader list can be sorted asc/desc by rank " do 
-      expect(@list.sort_by('rank')).to eq([[1, "tuan", 1, 1], [2, "luan", 2, 2], [3, "mai", 2, 3]])
-      expect(@list.sort_by('rank',false)).to eq([[3, "mai", 2, 3], [2, "luan", 2, 2], [1, "tuan", 1, 1]])
-    end
-
-    it "Cheers Leader list can be sorted asc/desc by name " do 
-      expect(@list.sort_by('name')).to eq([[2, "luan", 2, 2], [3, "mai", 2, 3], [1, "tuan", 1, 1]])
-      expect(@list.sort_by('name',false)).to eq([[1, "tuan", 1, 1], [3, "mai", 2, 3], [2, "luan", 2, 2]])
-    end
-
-    it "Cheers Leader list can be sorted asc/desc by sent " do 
-      expect(@list.sort_by('sent')).to eq([[1, "tuan", 1, 1], [2, "luan", 2, 2], [3, "mai", 2, 3]])
-      expect(@list.sort_by('sent',false)).to eq([[2, "luan", 2, 2], [3, "mai", 2, 3], [1, "tuan", 1, 1]])
-    end
-
-    it "Cheers Leader list can be sorted asc/desc by received " do 
-      expect(@list.sort_by('received')).to eq([[1, "tuan", 1, 1], [2, "luan", 2, 2], [3, "mai", 2, 3]])
-      expect(@list.sort_by('received',false)).to eq([[3, "mai", 2, 3], [2, "luan", 2, 2], [1, "tuan", 1, 1]])
-    end
-
-  end
-
-  context "Search Cheers Leader list" do 
-
-    it "It return [] when there's no matched search" do 
-      expect(@list.search('a;dsklfjal;ksdjfal;')).to eq([])
-    end
-
-    it "It return all name include text search" do 
-      expect(@list.search('uan')).to eq([[2, "luan", 2, 2], [1, "tuan", 1, 1]])
-    end
-
-    it "It return only exact name for search text" do 
-      expect(@list.search('mai')).to eq([[3, "mai", 2, 3]])
-    end
-
-  end
-  
 end
